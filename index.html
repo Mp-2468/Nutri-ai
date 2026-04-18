@@ -143,9 +143,25 @@ async function geminiRequest(parts, systemText=""){
 // ── Image analysis (Gemini Vision) ──────────────
 // Update your Image analysis function
 async function analyzeImage(b64, mime){
-  const prompt = `Return ONLY a valid JSON object. No markdown, no backticks, no preamble. 
-  {"foodName":"...","calories":number,"protein":number,"carbs":number,"fat":number,"fiber":number,"sugar":number,"sodium":number,"servingSize":"...","confidence":"high|medium|low","emoji":"one food emoji","tips":"one tip"}`;
+  const prompt = `Return ONLY a JSON object for this food image. 
+  CRITICAL: Do not include markdown (no backticks), no preamble, and no conversational text.
   
+  Expected Format:
+  {
+    "foodName": "string",
+    "calories": number,
+    "protein": number,
+    "carbs": number,
+    "fat": number,
+    "fiber": number,
+    "sugar": number,
+    "sodium": number,
+    "servingSize": "string",
+    "confidence": "high|medium|low",
+    "emoji": "emoji",
+    "tips": "string"
+  }`;
+
   const text = await geminiRequest([{inline_data:{mime_type:mime,data:b64}},{text:prompt}]);
   return extractJSON(text);
 }
