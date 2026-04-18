@@ -114,6 +114,20 @@ async function saveWeek(){
 // ══════════════════════════════════════
 //  GEMINI API  (used for ALL AI tasks)
 // ══════════════════════════════════════
+
+// A more robust helper to extract JSON from a string
+function extractJSON(text) {
+  try {
+    // This regex finds the first { and last } and takes everything in between
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error("No JSON found in response");
+    return JSON.parse(match[0]);
+  } catch (e) {
+    console.error("Raw response from Gemini:", text);
+    throw new Error("Invalid JSON format from AI. Please try again.");
+  }
+}
+
 async function geminiRequest(parts, systemText=""){
   const contents=[{role:"user",parts}];
   const body={contents,generationConfig:{maxOutputTokens:900,temperature:.7}};
@@ -127,29 +141,28 @@ async function geminiRequest(parts, systemText=""){
 }
 
 // ── Image analysis (Gemini Vision) ──────────────
+// Update your Image analysis function
 async function analyzeImage(b64, mime){
-  const prompt=`You are a professional nutritionist. Analyze this food image carefully.
-Return ONLY a single valid JSON object — no markdown fences, no extra text:
-{"foodName":"...","calories":number,"protein":number,"carbs":number,"fat":number,"fiber":number,"sugar":number,"sodium":number,"servingSize":"...","confidence":"high|medium|low","emoji":"one food emoji","tips":"one short practical nutrition tip about this food"}`;
-  const text=await geminiRequest([{inline_data:{mime_type:mime,data:b64}},{text:prompt}]);
-  return JSON.parse(text.replace(/```json|```/g,"").trim());
+  const prompt = `Return ONLY a valid JSON object. No markdown, no backticks, no preamble. 
+  {"foodName":"...","calories":number,"protein":number,"carbs":number,"fat":number,"fiber":number,"sugar":number,"sodium":number,"servingSize":"...","confidence":"high|medium|low","emoji":"one food emoji","tips":"one tip"}`;
+  
+  const text = await geminiRequest([{inline_data:{mime_type:mime,data:b64}},{text:prompt}]);
+  return extractJSON(text);
 }
 
 // ── Voice / text ingredient analysis ──────────────
 async function analyzeIngredients(description){
-  const prompt=`You are a professional nutritionist. The user described their meal or ingredients: "${description}"
-Analyze the nutritional content based on standard serving sizes.
-Return ONLY a single valid JSON object — no markdown fences, no extra text:
-{
-  "mealName":"concise meal name",
-  "ingredients":[{"name":"ingredient","amount":"estimated amount","calories":number,"protein":number,"carbs":number,"fat":number}],
-  "totals":{"calories":number,"protein":number,"carbs":number,"fat":number,"fiber":number,"sugar":number,"sodium":number},
-  "servingSize":"total estimated serving",
-  "emoji":"one food emoji",
-  "tips":"one practical health tip about this meal"
-}`;
-  const text=await geminiRequest([{text:prompt}]);
-  return JSON.parse(text.replace(/```json|```/g,"").trim());
+  const prompt = `Analyze: "${description}". Return ONLY a valid JSON object. No markdown.
+  {
+    "mealName":"name",
+    "ingredients":[{"name":"item","amount":"qty","calories":0,"protein":0,"carbs":0,"fat":0}],
+    "totals":{"calories":0,"protein":0,"carbs":0,"fat":0,"fiber":0,"sugar":0,"sodium":0},
+    "servingSize":"size",
+    "emoji":"emoji",
+    "tips":"tip"
+  }`;
+  const text = await geminiRequest([{text:prompt}]);
+  return extractJSON(text);
 }
 
 // ── Chat (multi-turn with system context) ──────────────
