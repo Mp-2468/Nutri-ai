@@ -1,0 +1,42 @@
+{
+  "name": "NutriAI — Smart Calorie Tracker",
+  "short_name": "NutriAI",
+  "description": "AI-powered calorie tracker with food scanning, BMI calculator, water tracker, and Gemini nutrition coaching",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#060610",
+  "theme_color": "#060610",
+  "orientation": "portrait-primary",
+  "categories": ["health", "fitness", "food"],
+  "icons": [
+    { "src": "icons/icon-72.png",  "sizes": "72x72",   "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-96.png",  "sizes": "96x96",   "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-152.png", "sizes": "152x152", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-384.png", "sizes": "384x384", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [
+    { "src": "screenshots/home.png",  "sizes": "430x932", "type": "image/png", "label": "Home Screen" },
+    { "src": "screenshots/scan.png",  "sizes": "430x932", "type": "image/png", "label": "Food Scanner" },
+    { "src": "screenshots/chat.png",  "sizes": "430x932", "type": "image/png", "label": "AI Chat" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Scan Food",
+      "short_name": "Scan",
+      "description": "Quickly scan a food item",
+      "url": "/?screen=scan",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Chat with NutriBot",
+      "short_name": "NutriBot",
+      "description": "Get meal suggestions from AI",
+      "url": "/?screen=chat",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ]
+}
